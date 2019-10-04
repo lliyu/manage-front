@@ -254,7 +254,7 @@
 				this.roleId = val
 				this.dialogFormVisible1 = true
 				this.treeLoading = true
-				let data = await http.get('apipermission/findBasePermission')
+				let data = await http.get('api/permission/findBasePermission')
 				if(!data.data) {
 					return
 				}
