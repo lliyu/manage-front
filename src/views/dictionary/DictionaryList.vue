@@ -296,7 +296,7 @@ export default {
  			}
 		},
 		// 查询属性明细
-		async selDetails(id) {
+		selDetails(id) {
 			let _this = this
 			_this.dialogTableVisible1 = true
 			_this.attrId = id
@@ -305,19 +305,12 @@ export default {
 				pageSize: _this.pageSize2,
 				startPage: _this.startPage2
 			}
-			let data = await http.get('api/sys/attr/detail/list', params)
-
-			if(!data.data) {
-				return
-			}
-
-			if (data.data.status === 200) {
-				 _this.tableData2 = data.data.data
-				 _this.total2 = data.data.total
-			} else {
-				_this.message(true,data.data.msg,'error')
-				_this.formData2 = []
-			}
+			http.get('api/sys/attr/detail/list', params).then(function(res){
+				if(res.status == 200){
+					_this.tableData2 = res.data.list
+				 	_this.total2 = res.data.total
+				}
+			});
 		},
 		// 删除属性明细
 		async delDetails() {

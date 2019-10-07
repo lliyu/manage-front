@@ -11,7 +11,7 @@
 			</el-col>
 			<el-col :span="4" class="userinfo">
 				<el-dropdown trigger="hover">
-					<span class="el-dropdown-link userinfo-inner"><img src="http://pic6.qiyipic.com/image/20180108/d2/2e/v_114540239_m_601_480_360.jpg" /> 欢迎您,{{nickName}}</span>
+					<span class="el-dropdown-link userinfo-inner"><img src="http://a.cphotos.bdimg.com/timg?image&quality=100&size=b4000_4000&sec=1568364286&di=92fc14740211bfa9a3ce714b08167084&src=http://i0.hdslb.com/bfs/article/645247f55aad0e514c44dc2875cf30f2293bde5a.jpg" /> 欢迎您,{{nickName}}</span>
 					<el-dropdown-menu slot="dropdown">
 						<el-dropdown-item>我的消息</el-dropdown-item>
 						<el-dropdown-item @click.native="personalCenter">个人中心</el-dropdown-item>
@@ -26,7 +26,7 @@
 				<transition name="el-fade-in">
 				<el-menu :default-active="$route.path" class="el-menu-vertical-demo el-menu-vertical-demo-main" style="width: 100%" @open="handleopen" @close="handleclose" @select="handleselect"
 					 unique-opened router v-show="!collapsed">
-					 <template v-for="(item,index) in rolePermis" v-if="item.children.length > 0">
+					 <template v-for="(item,index) in rolePermis">
 						 <el-submenu :index="index+''">
 							 <template slot="title"><i :class="item.iconCls"></i>{{item.name}}</template>
 							 <el-menu-item v-for="child in item.children" :index="child.url" :key="child.url" v-if="true">{{child.name}}</el-menu-item>
@@ -182,8 +182,13 @@
 				this.$confirm('确认退出吗?', '提示', {
 					type: 'warning'
 				}).then(() => {
-					sessionStorage.removeItem('user');
-					_this.$router.push('/login');
+					http.get("/api/logout").then(function(res){
+						if(res.status == 200){
+							sessionStorage.removeItem('user');
+							_this.$router.push('/login');
+						}
+					});
+					
 				}).catch(() => {
           return 'login'
 				})

@@ -10,6 +10,8 @@ import DictionaryList from './views/dictionary/DictionaryList.vue'
 import OperatingRecord from './views/system/OperatingRecord.vue'
 import Statistics from './views/system/Statistics.vue'
 import LoginLog from './views/system/LoginLog.vue'
+import collect from './views/collect/index.vue'
+import collectAdd from './views/collect/edit.vue'
 
 //ztr+pXP#b4>+
 let router = [
@@ -64,7 +66,16 @@ let router = [
             { path: '/operatingRecord', component: OperatingRecord, name: '操作记录' },
             { path: '/loginLog', component: LoginLog, name: '登陆日志' },
             { path: '/statistics', component: Statistics, name: '统计图表' },
-
+        ]
+    },
+    {
+        path: '/collect',
+        component: Home,
+        name: '数据采集',
+        iconCls: 'icon iconfont icon-xitongguanli',
+        children: [
+            { path: '/collect/list', component: collect, name: '采集列表' },
+            { path: '/collect/add', component: collectAdd, name: '新增采集信息' },
         ]
     },
     {

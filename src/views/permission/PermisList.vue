@@ -25,7 +25,7 @@
         </el-form-item>
       </el-form>
     </el-col>
-
+	<!-- 树 -->
     <div class="page">
       <div class="tree">
         <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
@@ -34,9 +34,9 @@
           class="filter-tree"
           :data="data2"
           :props="defaultProps"
-          default-expand-all
+          :show-checkbox=true
           :filter-node-method="filterNode"
-		  @node-click="handleNodeClick">
+		  @node-click="handleNodeClick"
           ref="tree2"
         ></el-tree>
       </div>
@@ -94,20 +94,16 @@
             <el-form-item label="地址" prop="url">
               <el-input type="text" placeholder="url地址" auto-complete="off" v-model="ruleForm.url"></el-input>
             </el-form-item>
+			<el-form-item label="编码" prop="code">
+              <el-input type="text" placeholder="编码" auto-complete="off" v-model="ruleForm.code"></el-input>
+            </el-form-item>
             <el-form-item label="类型" prop="type">
               <el-select v-model="ruleForm.type" @change="typeChange" filterable placeholder="请选择">
                 <el-option v-for="item in types" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="父级" prop="baseType" v-show="farCboshow">
-              <el-select v-model="ruleForm.baseType" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in baseTypes"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
+            <el-form-item label="父级" prop="baseType">
+			  <el-input type="text" placeholder="父级" disabled auto-complete="off" v-model="ruleForm.fname"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -135,7 +131,9 @@ export default {
         name: "",
         url: "",
         type: "",
-        baseType: ""
+		baseType: "",
+		fname: "",
+		code: ""
       },
       pageSizes: [10, 20, 50],
       startPage: 1,
@@ -143,6 +141,7 @@ export default {
       total: 0,
 	  formData: [],
 	  filterText: undefined,
+	  selectedNode: undefined,
       total: 0,
       page: 1,
       listLoading: false,
@@ -151,7 +150,7 @@ export default {
       formLabelWidth: "120px",
       permiIds: [],
       types: [], // 菜单类型
-      farCboshow: false,
+      farCboshow: true,
       baseTypes: [], // 父级菜单
       // 表单验证
       rules: {
@@ -231,7 +230,7 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.name.indexOf(value) !== -1;
     },
     getTree() {
       let _this = this;
@@ -276,6 +275,13 @@ export default {
     },
     // 显示添加菜单窗口
     showDialogForm() {
+	  var node = this.$refs.tree2.getCurrentNode();
+	  if(node == null){
+		  this.message(true, "请选择需要添加菜单的节点", "warning");
+		  return;
+	  }
+	  this.ruleForm.fname = node.name;
+	  this.ruleForm.baseType = node.id;
       this.dialogFormVisible = true;
       this.getCboData(); // 绑定菜单类型下拉框
     },
@@ -286,10 +292,14 @@ export default {
         name: _this.ruleForm.name,
         url: _this.ruleForm.url,
         type: _this.ruleForm.type,
-        lastId: _this.ruleForm.baseType
+		fid: _this.ruleForm.baseType,
+		code: _this.ruleForm.code
       };
       http.post("api/permission/add", params).then(function(res) {
-        if (res.status == 200) _this.$router.push({ path: "/permisList" });
+        if (res.status == 200){
+			this.dialogFormVisible = false;
+			_this.$router.push({ path: "/permisList" });
+		} 
       });
 
       // this.getFormData()
