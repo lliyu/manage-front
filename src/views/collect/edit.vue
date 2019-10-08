@@ -50,6 +50,7 @@
       <el-button type="primary" @click="test">测试</el-button>
       <el-button type="primary" :disabled="predisabled" @click="pre">上一步</el-button>
       <el-button type="primary" :disabled="nextdisabled" @click="next">下一步</el-button>
+      <el-button type="primary" :disabled="commitBtn" @click="addItemStep" >完成</el-button>
     </div>
     <el-dialog
   title="提示"
@@ -90,7 +91,8 @@ export default {
         name: "baidu",
         addr: "http://www.baidu.com/s?ie=UTF-8&wd=baidu",
         value: undefined,
-        index: 1
+        index: 1,
+        uid: undefined
       },
       itemsForm: {
         items: [
@@ -101,7 +103,8 @@ export default {
         ]
       },
       predisabled: true,
-      nextdisabled: false
+      nextdisabled: false,
+      commitBtn: true
     };
   },
   created() {
@@ -112,28 +115,51 @@ export default {
     }
     this.collectInfo();
   },
+  watch:{
+      active(val){
+          if(this.collect.step-1 === this.active){
+              this.commitBtn = false;
+          }else{
+              this.commitBtn = true;
+          }
+      }
+  },
   methods: {
     pre() {
+        this.active--;
       if (this.active == 0) {
-        this.predisabled = false;
+        this.predisabled = true;
+        this.nextdisabled = false;
+      }else{
+          this.predisabled = false;
+          this.nextdisabled = false;
       }
-      this.active--;
+      
       var info = this.steps[this.active];
       //todo
     },
     next() {
-      if (this.active == this.index - 1) {
-        this.nextdisabled = false;
+        this.active++;
+      if (this.active == this.collect.step - 1) {
+          this.predisabled = false;
+        this.nextdisabled = true;
+      }else{
+          this.predisabled = false;
+          this.nextdisabled = false;
       }
-      this.active++;
+      
       //将当前步骤存储
       this.info.value = JSON.stringify(this.itemsForm.items);
+      this.info.uid = this.id;
       this.steps.push(JSON.parse(JSON.stringify(this.info)));
       this.info.name = undefined;
       this.info.addr = undefined;
       this.info.index = undefined;
       this.info.value = undefined;
-      this.itemsForm.items = undefined;
+    //   this.itemsForm.items = {
+    //         value: "//h3[@class='t']/a/allText()",
+    //         name: "item"
+    //       };
       console.log(this.steps);
     },
     collectInfo() {
@@ -146,6 +172,18 @@ export default {
           _this.collect = res.data.data;
         }
       });
+    },
+    addItemStep(){
+        let _this = this;
+        http.post("/api/step/add", _this.steps).then(function(res){
+            if(res.status == 200){
+                _this.$notify({
+                title: '提示',
+                message: '添加成功',
+                duration: 0
+                });
+            }
+        });
     },
     removeItem(item) {
       var index = this.itemsForm.items.indexOf(item);
