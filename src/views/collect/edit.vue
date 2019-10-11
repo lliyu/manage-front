@@ -92,7 +92,7 @@ export default {
         addr: "http://www.baidu.com/s?ie=UTF-8&wd=baidu",
         value: undefined,
         index: 1,
-        uid: undefined
+        collectId: undefined
       },
       itemsForm: {
         items: [
@@ -150,7 +150,7 @@ export default {
       
       //将当前步骤存储
       this.info.value = JSON.stringify(this.itemsForm.items);
-      this.info.uid = this.id;
+      this.info.collectId = this.id;
       this.steps.push(JSON.parse(JSON.stringify(this.info)));
       this.info.name = undefined;
       this.info.addr = undefined;
@@ -175,15 +175,23 @@ export default {
     },
     addItemStep(){
         let _this = this;
-        http.post("/api/step/add", _this.steps).then(function(res){
+        //将当前步骤存储
+      _this.info.value = JSON.stringify(_this.itemsForm.items);
+      _this.info.collectId = _this.id;
+      _this.steps.push(JSON.parse(JSON.stringify(_this.info)));
+        let param = {
+            steps: JSON.stringify(_this.steps)
+        }
+        http.post("/api/step/add", param).then(function(res){
             if(res.status == 200){
                 _this.$notify({
                 title: '提示',
-                message: '添加成功',
-                duration: 0
+                message: '添加成功'
                 });
+                //返回列表
             }
         });
+
     },
     removeItem(item) {
       var index = this.itemsForm.items.indexOf(item);

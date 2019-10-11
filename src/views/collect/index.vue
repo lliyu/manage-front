@@ -40,6 +40,13 @@
         </el-table-column>-->
         <el-table-column prop="id" label="编码" sortable></el-table-column>
         <el-table-column prop="name" label="名称" sortable></el-table-column>
+        <el-table-column prop="step" label="解析步骤数" sortable></el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template slot-scope="scope">
+            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+            <el-button type="text" size="small">编辑</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-col>
     <el-col>
@@ -135,17 +142,33 @@ export default {
       _this.listLoading = false;
     },
     showForm() {
-	//   this.dialogFormVisible = true;   
-      this.$router.push({path: '/collect/add?id=' + 1 })
-	},
-	addCollect(){
-		http.get("/api/collect/add", params).then(function(response) {
+      this.dialogFormVisible = true;
+      //   this.$router.push({path: '/collect/add?id=' + 1 })
+    },
+    handleClick(row) {
+	  console.log(row);
+	  this.$router.push({path: '/collect/steps?id=' + 1 })
+    },
+    addCollect() {
+      let _this = this;
+      http.post("/api/collect/add", _this.info).then(function(response) {
         if (response.status === 200) {
-          this.$router.push({ path: "/collect/add?id=" + response.data });
+          _this.dialogFormVisible = false;
+          _this
+            .$confirm("是否添加解析该任务步骤细节？", "提示", {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning"
+            })
+            .then(() => {
+              _this.$router.push({
+                path: "/collect/add?id=" + response.data.data
+              });
+            });
         }
       });
-	},
-	
+    },
+
     deleteData() {
       if (this.selectedList.length === 0) {
         this.message(true, "请选择需要删除的菜单", "warning");

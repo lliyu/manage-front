@@ -101,7 +101,7 @@ export default {
       timeout: 60000,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'Access-Control-Max-Age': '1209600'
          // 'Access-Control-Allow-Headers': 'Authorization,Origin, X-Requested-With, Content-Type, Accept'
         // 'Access-Control-Allow-Methods': 'GET,POST'

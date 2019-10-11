@@ -12,6 +12,7 @@ import Statistics from './views/system/Statistics.vue'
 import LoginLog from './views/system/LoginLog.vue'
 import collect from './views/collect/index.vue'
 import collectAdd from './views/collect/edit.vue'
+import collectSteps from './views/collect/step.vue'
 
 //ztr+pXP#b4>+
 let router = [
@@ -76,6 +77,7 @@ let router = [
         children: [
             { path: '/collect/list', component: collect, name: '采集列表' },
             { path: '/collect/add', component: collectAdd, name: '新增采集信息' },
+            { path: '/collect/steps', component: collectSteps, name: '解析详细' },
         ]
     },
     {
