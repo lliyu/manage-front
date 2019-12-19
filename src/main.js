@@ -66,35 +66,36 @@ const router = new VueRouter({
 
 // url 拦截
 //todo 暂时关闭权限校验
-// router.beforeEach((to, from, next) => {
-//   if (to.path == '/login') {
-//     sessionStorage.removeItem('user');
-//   }
-//   let user = JSON.parse(sessionStorage.getItem('user'));
-//   if (!user && to.path != '/login') {
-//     next({ path: '/login' })
-//   } else if(user && to.path != '/login' && to.path != '/404' && to.path != '/'){
-//     let permis = user.rolePermis
-//     let allow = false
-//     for (var i = 0,length = permis.length; i < length; i++) {
-//       let children = permis[i].children
-//       for (var j = 0,leng = children.length; j < leng; j++) {
-//         if(to.path === children[j].url) {
-//           allow = true
-//         }
-//       }
-//     }
-//     if (allow) {
-//       console.log('有权限进入' + to.path);
-//       next()
-//     } else {
-//       console.log('没有权限进入' + to.path);
-//       next({ path: '/404' })
-//     }
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if (to.path == '/login') {
+    sessionStorage.removeItem('user');
+  }
+  let user = JSON.parse(sessionStorage.getItem('user'));
+  if (!user && to.path != '/login') {
+    next({ path: '/login' })
+  } else if(user && to.path != '/login' && to.path != '/404' && to.path != '/'){
+    let permis = user.rolePermis
+    let allow = false
+    for (var i = 0,length = permis.length; i < length; i++) {
+      let children = permis[i].children
+      for (var j = 0,leng = children.length; j < leng; j++) {
+        if(to.path === children[j].url) {
+          allow = true
+        }
+      }
+    }
+    next()
+    // if (allow) {
+    //   console.log('有权限进入' + to.path);
+      
+    // } else {
+    //   console.log('没有权限进入' + to.path);
+    //   next({ path: '/404' })
+    // }
+  } else {
+    next()
+  }
+})
 
 router.afterEach(transition => {
 })

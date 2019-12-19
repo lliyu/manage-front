@@ -50,29 +50,25 @@
       <el-button type="primary" @click="test">测试</el-button>
       <el-button type="primary" :disabled="predisabled" @click="pre">上一步</el-button>
       <el-button type="primary" :disabled="nextdisabled" @click="next">下一步</el-button>
-      <el-button type="primary" :disabled="commitBtn" @click="addItemStep" >完成</el-button>
+      <el-button type="primary" :disabled="commitBtn" @click="addItemStep">完成</el-button>
     </div>
-    <el-dialog
-  title="提示"
-  :visible.sync="dialogVisible"
-  width="30%"
-  >
-  <span>
-      <pre>
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>
+        <pre>
       {{ message }}
       </pre>
       </span>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-  </span>
-</el-dialog>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import http from "../../utils/http";
-import { MessageBox } from 'element-ui';
+import { MessageBox } from "element-ui";
 export default {
   data() {
     return {
@@ -115,39 +111,39 @@ export default {
     }
     this.collectInfo();
   },
-  watch:{
-      active(val){
-          if(this.collect.step-1 === this.active){
-              this.commitBtn = false;
-          }else{
-              this.commitBtn = true;
-          }
+  watch: {
+    active(val) {
+      if (this.collect.step - 1 === this.active) {
+        this.commitBtn = false;
+      } else {
+        this.commitBtn = true;
       }
+    }
   },
   methods: {
     pre() {
-        this.active--;
+      this.active--;
       if (this.active == 0) {
         this.predisabled = true;
         this.nextdisabled = false;
-      }else{
-          this.predisabled = false;
-          this.nextdisabled = false;
+      } else {
+        this.predisabled = false;
+        this.nextdisabled = false;
       }
-      
+
       var info = this.steps[this.active];
       //todo
     },
     next() {
-        this.active++;
+      this.active++;
       if (this.active == this.collect.step - 1) {
-          this.predisabled = false;
+        this.predisabled = false;
         this.nextdisabled = true;
-      }else{
-          this.predisabled = false;
-          this.nextdisabled = false;
+      } else {
+        this.predisabled = false;
+        this.nextdisabled = false;
       }
-      
+
       //将当前步骤存储
       this.info.value = JSON.stringify(this.itemsForm.items);
       this.info.collectId = this.id;
@@ -156,10 +152,10 @@ export default {
       this.info.addr = undefined;
       this.info.index = undefined;
       this.info.value = undefined;
-    //   this.itemsForm.items = {
-    //         value: "//h3[@class='t']/a/allText()",
-    //         name: "item"
-    //       };
+      //   this.itemsForm.items = {
+      //         value: "//h3[@class='t']/a/allText()",
+      //         name: "item"
+      //       };
       console.log(this.steps);
     },
     collectInfo() {
@@ -173,25 +169,24 @@ export default {
         }
       });
     },
-    addItemStep(){
-        let _this = this;
-        //将当前步骤存储
+    addItemStep() {
+      let _this = this;
+      //将当前步骤存储
       _this.info.value = JSON.stringify(_this.itemsForm.items);
       _this.info.collectId = _this.id;
       _this.steps.push(JSON.parse(JSON.stringify(_this.info)));
-        let param = {
-            steps: JSON.stringify(_this.steps)
+      let param = {
+        steps: JSON.stringify(_this.steps)
+      };
+      http.post("/api/step/add", param).then(function(res) {
+        if (res.status == 200) {
+          _this.$notify({
+            title: "提示",
+            message: "添加成功"
+          });
+          //返回列表
         }
-        http.post("/api/step/add", param).then(function(res){
-            if(res.status == 200){
-                _this.$notify({
-                title: '提示',
-                message: '添加成功'
-                });
-                //返回列表
-            }
-        });
-
+      });
     },
     removeItem(item) {
       var index = this.itemsForm.items.indexOf(item);
@@ -207,7 +202,7 @@ export default {
       console.log(this.itemsForm.items);
     },
     test() {
-        let _this = this;
+      let _this = this;
       _this.info.value = JSON.stringify(_this.itemsForm.items);
       http.post("/api/collect/test", _this.info).then(function(res) {
         console.log(res);

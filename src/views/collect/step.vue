@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <el-row>
-  <el-col :span="8" v-for="(o, index) in 6" :key="o" :offset="index > 0 ? 2 : 0">
+  <el-col class="step" :span="8" v-for="(o, index) in 6" :key="o" :offset="2">
     <el-card :body-style="{ padding: '0px' }">
       <img src="https://i1.hdslb.com/bfs/live/e8631214a846035037b059d2d1c8f603312b4dcc.jpg@1e_1c_100q.webp" class="image">
       <div style="padding: 14px;">
@@ -31,6 +31,7 @@
     display: table;
     content: "";
   }
+  
   .clearfix:after {
     clear: both
   }
@@ -38,4 +39,14 @@
   .box-card {
     width: 480px;
   } */
+
+  .step {
+    padding-top: 10px;
+    cursor: pointer;
+    transition: all 0.6s;
+  }
+
+  .step:hover {
+    transform: scale(1.1);
+  }
 </style>
